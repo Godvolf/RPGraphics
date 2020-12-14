@@ -45,8 +45,7 @@ export default function ClmtrackrOutput() {
 
         function drawLoop() {
           requestAnimationFrame(drawLoop);
-          cc.clearRect(0, 0, canvasInput.width, canvasInput.height);
-          ctracker.start(self.video);
+          //cc.clearRect(0, 0, canvasInput.width, canvasInput.height);
           ctracker.draw(canvasInput);
         }
         drawLoop();

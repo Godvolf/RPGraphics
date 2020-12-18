@@ -4,20 +4,19 @@
   "private": true,
   "dependencies": {
     "@tensorflow-models/body-pix": "^1.1.2",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
+    "@tensorflow/tfjs": "^2.8.1",
+    "@tensorflow/tfjs-converter": "^2.8.1",
+    "@tensorflow/tfjs-core": "^2.8.1",
+    "clmtrackr": "^1.1.2",
+    "getusermedia": "^2.0.1",
+    "jsfeat": "0.0.8",
     "react": "^16.14.0",
     "react-clmtrackr": "^1.1.3",
     "react-dom": "^16.14.0",
-    "react-scripts": "3.4.3",
-    "react-webcam": "^5.2.1"
+    "react-scripts": "3.4.3"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "webpack serve"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -33,5 +32,19 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
+    "babel-loader": "^8.2.2",
+    "css-loader": "^5.0.1",
+    "html-webpack-plugin": "^4.5.0",
+    "style-loader": "^2.0.0",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-dev-server": "^3.11.0"
   }
 }

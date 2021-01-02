@@ -21,7 +21,7 @@ export default function Clmtrackr() {
         ctrack.start(video);
         function drawLoop() {
             requestAnimationFrame(drawLoop);
-           // overlayCC.clearRect(0, 0, 640, 480);
+            overlayCC.clearRect(0, 0, 640, 480);
             ctrack.draw(overlay);
             }
             drawLoop();

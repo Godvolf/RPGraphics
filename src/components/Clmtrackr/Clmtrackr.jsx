@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import clm from 'clmtrackr';
-import './face_deformer.js'
+import faceDeformer from './face_deformer.js'
 
 export default function Clmtrackr() {
 
-  var fd = new faceDeformer();
+  // var fd = new faceDeformer();
   
-  <img id="skull" src="./Masks/skullmask.jpg"></img>
 
   var positions;
   var currentMask = 0;

@@ -20,12 +20,8 @@ function App() {
     if (navigator.mediaDevices) {
         navigator.mediaDevices.getUserMedia({video : true}).then(
             ( stream ) => {
-                let vid = video;
-                if ("srcObject" in vid) {
-                    vid.srcObject = stream;
-                } else {
-                    vid.src = (window.URL && window.URL.createObjectURL(stream));
-                }
+                let vid = document.getElementById('videoel');
+                vid.srcObject = stream;
                 vid.onloadedmetadata = () => {
                     vid.play();
                 }

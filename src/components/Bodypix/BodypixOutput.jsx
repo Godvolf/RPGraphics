@@ -24,7 +24,7 @@ export default function BodypixOutput() {
               ];
             const coloredPartImage = bodyPix.toColoredPartImageData(person, rainbow);
             const opacity = 0.7;
-            let overlay = document.getElementById('bodypix-canvas');
+            let overlay = document.getElementById('clm-canvas');
             bodyPix.drawMask(
                 overlay, video, coloredPartImage, opacity, 0, false);
         }

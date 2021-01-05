@@ -43,10 +43,12 @@ function App() {
           <video id="videoel" width="640" height="480" preload="auto" loop playsInline autoPlay></video>
           <canvas id="clm-canvas" width="640" height="480"></canvas>
           <canvas id="bodypix-canvas" width="640" height="480"></canvas>
+          <canvas id="webgl" width="640" height="480"></canvas>
+          <img id="skull" className="masks" src="./src/components/Clmtrackr/Masks/skullmask.jpg" alt="skull"></img>
         </div>
       </div>
       <Clmtrackr />
-      <BodypixOutput />
+      {/*<BodypixOutput />*/}
     </div>
   );
 }

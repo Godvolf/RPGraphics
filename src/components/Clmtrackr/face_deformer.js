@@ -1,5 +1,135 @@
-"use strict";
-var faceDeformer = function() {
+export default function faceDeformer () {
+
+	var LOGGING_ENABLED = true;
+	
+	/**
+	 * Wrapped logging function.
+	 * @param {string} msg The message to log.
+	 */
+	const error = function (msg) {
+	  if (!LOGGING_ENABLED) { return; }
+	  if (window.console) {
+		if (window.console.error) {
+		  window.console.error(msg);
+		} else if (window.console.log) {
+		  window.console.log(msg);
+		}
+	  }
+	  throw msg;
+	};
+	
+	/**
+	 * Check if the page is embedded.
+	 * @return {boolean} True of we are in an iframe
+	 */
+	const isInIFrame = function () {
+	  return window !== window.top;
+	};
+
+	const setupWebGL = function (canvas, optAttribs) {
+	
+	  if (!window.WebGLRenderingContext) {
+		// showLink(GET_A_WEBGL_BROWSER);
+		return null;
+	  }
+	
+	  var context = create3DContext(canvas, optAttribs);
+	  if (!context) {
+		// showLink(OTHER_PROBLEM);
+		return null;
+	  }
+	  return context;
+	};
+	
+	const create3DContext = function (canvas, optAttribs) {
+	  var names = ['webgl', 'experimental-webgl'];
+	  var context = null;
+	  for (var ii = 0; ii < names.length; ++ii) {
+		try {
+		  context = canvas.getContext(names[ii], optAttribs);
+		} catch (e) {}
+		if (context) {
+		  break;
+		}
+	  }
+	  return context;
+	};
+	
+	const updateCSSIfInIFrame = function () {
+	  if (isInIFrame()) {
+		document.body.className = 'iframe';
+	  }
+	};
+	
+	/**
+	 * Gets a WebGL context.
+	 * makes its backing store the size it is displayed.
+	 */
+	const getWebGLContext = function (canvas) {
+	  if (isInIFrame()) {
+		updateCSSIfInIFrame();
+	
+		// make the canvas backing store the size it's displayed.
+		canvas.width = canvas.clientWidth;
+		canvas.height = canvas.clientHeight;
+	  }
+	
+	  var gl = setupWebGL(canvas);
+	  return gl;
+	};
+	
+	const loadShader = function (gl, shaderSource, shaderType, optErrorCallback) {
+	  var errFn = optErrorCallback || error;
+	  // Create the shader object
+	  var shader = gl.createShader(shaderType);
+	
+	  // Load the shader source
+	  gl.shaderSource(shader, shaderSource);
+	
+	  // Compile the shader
+	  gl.compileShader(shader);
+	
+	  // Check the compile status
+	  var compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+	  if (!compiled) {
+		// Something went wrong during compilation; get the error
+		var lastError = gl.getShaderInfoLog(shader);
+		errFn("*** Error compiling shader '" + shader + "':" + lastError);
+		gl.deleteShader(shader);
+		return null;
+	  }
+	
+	  return shader;
+	};
+
+	const loadProgram = function (gl, shaders, optAttribs, optLocations) {
+	  var program = gl.createProgram();
+	  for (var i = 0; i < shaders.length; ++i) {
+		gl.attachShader(program, shaders[i]);
+	  }
+	  if (optAttribs) {
+		for (var i = 0; i < optAttribs.length; ++i) {
+		  gl.bindAttribLocation(
+			  program,
+			  optLocations ? optLocations[i] : i,
+			  optAttribs[i]);
+		}
+	  }
+	  gl.linkProgram(program);
+	
+	  // Check the link status
+	  const linked = gl.getProgramParameter(program, gl.LINK_STATUS);
+	  if (!linked) {
+		// something went wrong with the link
+		const lastError = gl.getProgramInfoLog(program);
+		error('Error in program linking:' + lastError);
+	
+		gl.deleteProgram(program);
+		return null;
+	  }
+	  return program;
+	};
+	
 
 	var gl, verticeMap;
 	var numTriangles;
@@ -15,6 +145,7 @@ var faceDeformer = function() {
 
 	this.init = function(canvas) {
 		// ready a webgl element
+		console.log('wchodze!')
 		gl = getWebGLContext(canvas);
 		gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
 
@@ -47,13 +178,13 @@ var faceDeformer = function() {
 		width = maxx-minx;
 		height = maxy-miny;
 
-		if (element.tagName == 'VIDEO' || element.tagName == 'IMG') {
+		if (element.tagName === 'VIDEO' || element.tagName === 'IMG') {
 			var ca = document.createElement('canvas');
 			ca.width = element.width;
 			ca.height = element.height;
 			var cc = ca.getContext('2d');
 			cc.drawImage(element, 0, 0, element.width, element.height);
-		} else if (element.tagName == 'CANVAS') {
+		} else if (element.tagName === 'CANVAS') {
 			var cc = element.getContext('2d');
 		}
 		var image = cc.getImageData(minx, miny, width, height);
@@ -97,11 +228,10 @@ var faceDeformer = function() {
 				"  gl_FragColor = vec4(0.2, 0.2, 0.2, 1.0);",
 				"}"
 			].join('\n');
-
 			var gridVertexShader = loadShader(gl, gridVertexShaderProg, gl.VERTEX_SHADER);
 			var gridFragmentShader = loadShader(gl, gridFragmentShaderProg, gl.FRAGMENT_SHADER);
 			try {
-				gridProgram = createProgram(gl, [gridVertexShader, gridFragmentShader]);
+				gridProgram = loadProgram(gl, [gridVertexShader, gridFragmentShader]);
 			} catch(err) {
 				alert("There was a problem setting up the webGL programs. Maybe you should try it in another browser. :(");
 			}
@@ -138,10 +268,9 @@ var faceDeformer = function() {
 				"  gl_FragColor = texture2D(u_image, v_texCoord);",
 				"}"
 			].join('\n');
-
 			var vertexShader = loadShader(gl, vertexShaderProg, gl.VERTEX_SHADER);
 			var fragmentShader = loadShader(gl, fragmentShaderProg, gl.FRAGMENT_SHADER);
-			drawProgram = createProgram(gl, [vertexShader, fragmentShader]);
+			drawProgram = loadProgram(gl, [vertexShader, fragmentShader]);
 
 			texCoordBuffer = gl.createBuffer();
 

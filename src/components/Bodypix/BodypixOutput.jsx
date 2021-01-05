@@ -30,16 +30,21 @@ export default function BodypixOutput() {
         setVid(vid);
 
         async function detect(net) {
-            const person = await net.estimatePersonSegmentation(video, 8);
+            const person = await net.segmentPerson(video);
 
-            const maskBackground = false;
-            const backgroundDarkeningMask = bodyPix.toMaskImageData(person, maskBackground);
+            const foregroundColor = {r: 0, g: 0, b: 0, a: 255};
+            const backgroundColor = {r: 0, g: 0, b: 0, a: 0};
+            const backgroundDarkeningMask = bodyPix.toMask(person, foregroundColor, backgroundColor);
 
             addBackground(backgroundDarkeningMask);
         }
 
         async function runBodySegments() {
-            const net = await bodyPix.load(1.0);
+            const net = await bodyPix.load({
+                architecture: 'ResNet50',
+                outputStride: 16,
+                quantBytes: 1
+              });
             setInterval(() => {
                 detect(net);
             }, 100)
@@ -53,7 +58,7 @@ export default function BodypixOutput() {
             var ctx = canvas.getContext('2d');
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
             ctx.globalCompositeOperation = 'source-out';
-            ctx.drawImage(videoBackground, 0, 0, 640, 480);
+            ctx.drawImage(base_image, 0, 0, 640, 480);
         }
         
     }, [video])

@@ -19,7 +19,7 @@ export default function BodypixOutput() {
         setVid(vid);
 
         async function detect(net) {
-            const person = await net.estimatePersonSegmentation(video);
+            const person = await net.estimatePersonSegmentation(video, 8);
 
             const maskBackground = false;
             const backgroundDarkeningMask = bodyPix.toMaskImageData(person, maskBackground);
@@ -28,7 +28,7 @@ export default function BodypixOutput() {
         }
 
         async function runBodySegments() {
-            const net = await bodyPix.load();
+            const net = await bodyPix.load(1.0);
             setInterval(() => {
                 detect(net);
             }, 100)

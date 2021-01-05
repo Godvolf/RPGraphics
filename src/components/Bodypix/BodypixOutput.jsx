@@ -8,6 +8,9 @@ export default function BodypixOutput() {
 
 
     useEffect(() => {
+
+        const canvas = document.getElementById('clm-canvas');
+
         tf.disableDeprecationWarnings()
         let vid = document.getElementById('videoel');
         setVid(vid);
@@ -15,14 +18,18 @@ export default function BodypixOutput() {
         async function detect(net) {
             const person = await net.estimatePersonSegmentation(video);
 
-            const maskBackground = true;
-            const maskImage = bodyPix.toMaskImageData(person, maskBackground);
+            const maskBackground = false;
+            const backgroundDarkeningMask = bodyPix.toMaskImageData(person, maskBackground);
 
-            let overlay = document.getElementById('clm-canvas');
-            let opacity = 1;
+            compositeFrame(backgroundDarkeningMask);
 
-            bodyPix.drawMask(
-                overlay, video, maskImage, opacity, 0, false);
+            // console.log(person);
+
+            // let overlay = document.getElementById('clm-canvas');
+            // let opacity = 1;
+
+            // bodyPix.drawMask(
+            //     overlay, video, maskImage, opacity, 0, false);
         }
 
         async function runBodySegments() {
@@ -33,6 +40,18 @@ export default function BodypixOutput() {
         }
         vid.onloadeddata = function() {
             runBodySegments();
+        }
+
+        async function compositeFrame(backgroundDarkeningMask) {
+            if (!backgroundDarkeningMask) return;
+            // grab canvas holding the bg image
+            var ctx = canvas.getContext('2d');
+            // composite the segmentation mask on top
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.putImageData(backgroundDarkeningMask, 0, 0);
+            // composite the video frame
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.drawImage(video, 0, 0, 640, 480);
         }
         
     }, [video])

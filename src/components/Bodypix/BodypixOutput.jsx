@@ -7,7 +7,18 @@ export default function BodypixOutput() {
   const [video, setVid] = useState('');
   
   let base_image = new Image();
-  base_image.src = './src/components/Bodypix/Background/win.jpg';
+  base_image.src = './src/components/Bodypix/Background/forest.jpg';
+
+  // if we are going to support video backgrounds: 
+  // https://stackoverflow.com/questions/19251983/dynamically-create-a-html5-video-element-without-it-being-shown-in-the-page/20611625
+  let videoBackground = document.createElement('video');
+  videoBackground.src = './src/components/Bodypix/Background/crash.mp4';
+  videoBackground.width="640";
+  videoBackground.height="480";
+  videoBackground.preload="auto";
+  videoBackground.loop = true;
+  videoBackground.playsInline = true;
+  videoBackground.autoplay = true;
 
 
     useEffect(() => {
@@ -42,7 +53,7 @@ export default function BodypixOutput() {
             var ctx = canvas.getContext('2d');
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
             ctx.globalCompositeOperation = 'source-out';
-            ctx.drawImage(base_image, 0, 0, 640, 480);
+            ctx.drawImage(videoBackground, 0, 0, 640, 480);
         }
         
     }, [video])

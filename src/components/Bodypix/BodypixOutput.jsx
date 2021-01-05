@@ -5,6 +5,9 @@ import * as tf from '@tensorflow/tfjs';
 
 export default function BodypixOutput() {
   const [video, setVid] = useState('');
+  
+  let base_image = new Image();
+  base_image.src = './src/components/Bodypix/Background/win.jpg';
 
 
     useEffect(() => {
@@ -21,15 +24,7 @@ export default function BodypixOutput() {
             const maskBackground = false;
             const backgroundDarkeningMask = bodyPix.toMaskImageData(person, maskBackground);
 
-            compositeFrame(backgroundDarkeningMask);
-
-            // console.log(person);
-
-            // let overlay = document.getElementById('clm-canvas');
-            // let opacity = 1;
-
-            // bodyPix.drawMask(
-            //     overlay, video, maskImage, opacity, 0, false);
+            addBackground(backgroundDarkeningMask);
         }
 
         async function runBodySegments() {
@@ -42,16 +37,12 @@ export default function BodypixOutput() {
             runBodySegments();
         }
 
-        async function compositeFrame(backgroundDarkeningMask) {
+        async function addBackground(backgroundDarkeningMask) {
             if (!backgroundDarkeningMask) return;
-            // grab canvas holding the bg image
             var ctx = canvas.getContext('2d');
-            // composite the segmentation mask on top
-            ctx.globalCompositeOperation = 'destination-over';
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
-            // composite the video frame
-            ctx.globalCompositeOperation = 'source-in';
-            ctx.drawImage(video, 0, 0, 640, 480);
+            ctx.globalCompositeOperation = 'source-out';
+            ctx.drawImage(base_image, 0, 0, 640, 480);
         }
         
     }, [video])

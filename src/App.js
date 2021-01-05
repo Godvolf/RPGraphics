@@ -40,19 +40,10 @@ function App() {
     <div>
       <div className="container">
         <div id="container">
-          <canvas
-            id="bg"
-            width="640"
-            height="480" 
-            style={{background: 'url("./src/components/Bodypix/Background/win.jpg")',
-            backgroundPosition: 'center',
-            backgroundSize: 'cover',
-            backgroundRepeat: 'no-repeat'}}
-          ></canvas>
+          <video id="videoel" width="640" height="480" preload="auto" loop playsInline autoPlay></video>
           <canvas id="clm-canvas" width="640" height="480"></canvas>
           <canvas id="bodypix-canvas" width="640" height="480"></canvas>
           <canvas id="webgl" width="640" height="480"></canvas>
-          <video id="videoel" width="640" height="480" preload="auto" loop playsInline autoPlay></video>
           <img id="skull" className="masks" src="./src/components/Clmtrackr/Masks/skullmask.jpg" alt="skull"></img>
         </div>
       </div>

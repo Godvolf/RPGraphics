@@ -45,6 +45,9 @@ function App() {
           <canvas id="bodypix-canvas" width="640" height="480"></canvas>
           <canvas id="webgl" width="640" height="480"></canvas>
           <img id="skull" className="masks" src="./src/components/Clmtrackr/Masks/skullmask.jpg" alt="skull"></img>
+          <img id="halfElf" className="masks" src="./src/components/Clmtrackr/Masks/half-elf.jpg" alt="halfElf"></img>
+          <img id="elf" className="masks" src="./src/components/Clmtrackr/Masks/elf.jpg" alt="elf"></img>
+          <img id="orc" className="masks" src="./src/components/Clmtrackr/Masks/orc.jpg" alt="orc"></img>
         </div>
       </div>
       <Clmtrackr />

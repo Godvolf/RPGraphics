@@ -23,6 +23,15 @@ export default function BodypixOutput() {
 
     useEffect(() => {
 
+        let qualityFlag = 1;  // 0- fast, 1- accurate
+
+        let neuralNetworkComplexity =  {
+            architecture: qualityFlag ? 'ResNet50' : 'MobileNetV1',
+            outputStride: 16,
+            multiplier: qualityFlag ? 1 : 0.75,
+            quantBytes: qualityFlag ? 1 : 4
+        };
+
         const canvas = document.getElementById('clm-canvas');
 
         tf.disableDeprecationWarnings()
@@ -40,11 +49,7 @@ export default function BodypixOutput() {
         }
 
         async function runBodySegments() {
-            const net = await bodyPix.load({
-                architecture: 'ResNet50',
-                outputStride: 16,
-                quantBytes: 1
-              });
+            const net = await bodyPix.load(neuralNetworkComplexity);
             setInterval(() => {
                 detect(net);
             }, 100)

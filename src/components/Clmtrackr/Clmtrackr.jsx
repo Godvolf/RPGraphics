@@ -266,7 +266,7 @@ export default function Clmtrackr() {
       }
       // check whether mask has converged
       var pn = ctrack.getConvergence();
-      console.log(pn);
+      // console.log(pn);
       if (pn < 1000) {
         switchMasks();
         requestAnimationFrame(drawMaskLoop);

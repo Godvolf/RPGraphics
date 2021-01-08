@@ -51,7 +51,7 @@ function App() {
         </div>
       </div>
       <Clmtrackr />
-      {/*<BodypixOutput />*/}
+      <BodypixOutput />
     </div>
   );
 }

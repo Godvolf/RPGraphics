@@ -6,37 +6,64 @@ import * as tf from '@tensorflow/tfjs';
 export default function BodypixOutput() {
   const [video, setVid] = useState('');
 
+  // if we are going to support video backgrounds: 
+  // https://stackoverflow.com/questions/19251983/dynamically-create-a-html5-video-element-without-it-being-shown-in-the-page/20611625
+  /*let videoBackground = document.createElement('video');
+  videoBackground.src = './src/components/Bodypix/Background/crash.mp4';
+  videoBackground.width="640";
+  videoBackground.height="480";
+  videoBackground.preload="auto";
+  videoBackground.loop = true;
+  videoBackground.playsInline = true;
+  videoBackground.autoplay = true;*/
+
 
     useEffect(() => {
+
+        let base_image = new Image(640, 480);
+        base_image.src = './src/components/Bodypix/Background/room.jpg';
+
+        let qualityFlag = 1;  // 0- fast, 1- accurate
+
+        let neuralNetworkComplexity =  {
+            architecture: qualityFlag ? 'ResNet50' : 'MobileNetV1',
+            outputStride: 16,
+            multiplier: qualityFlag ? 1 : 0.75,
+            quantBytes: qualityFlag ? 1 : 4
+        };
+
+        const canvas = document.getElementById('clm-canvas');
+
         tf.disableDeprecationWarnings()
         let vid = document.getElementById('videoel');
         setVid(vid);
 
         async function detect(net) {
-            const person = await net.estimatePersonSegmentation(video);
-            const rainbow = [
-                [158, 1, 66],    [181, 26, 71],   [202, 50, 74],   [219, 73, 74],
-                [232, 94, 73],   [242, 117, 75],  [248, 142, 83],  [251, 167, 96],
-                [253, 190, 112], [254, 210, 129], [254, 227, 149], [254, 240, 166],
-                [251, 248, 176], [243, 249, 172], [231, 245, 163], [213, 238, 159],
-                [190, 229, 160], [164, 218, 163], [137, 207, 165], [110, 192, 168],
-                [86, 173, 174],  [70, 150, 179],  [67, 127, 180],  [77, 103, 173]
-              ];
-            const coloredPartImage = bodyPix.toColoredPartImageData(person, rainbow);
-            const opacity = 0.7;
-            let overlay = document.getElementById('clm-canvas');
-            bodyPix.drawMask(
-                overlay, video, coloredPartImage, opacity, 0, false);
+            const person = await net.segmentPerson(video);
+
+            const foregroundColor = {r: 0, g: 0, b: 0, a: 255};
+            const backgroundColor = {r: 0, g: 0, b: 0, a: 0};
+            const backgroundDarkeningMask = bodyPix.toMask(person, foregroundColor, backgroundColor);
+
+            addBackground(backgroundDarkeningMask);
         }
 
         async function runBodySegments() {
-            const net = await bodyPix.load();
+            const net = await bodyPix.load(neuralNetworkComplexity);
             setInterval(() => {
                 detect(net);
             }, 100)
         }
         vid.onloadeddata = function() {
             runBodySegments();
+        }
+
+        async function addBackground(backgroundDarkeningMask) {
+            if (!backgroundDarkeningMask) return;
+            var ctx = canvas.getContext('2d');
+            ctx.putImageData(backgroundDarkeningMask, 0, 0);
+            ctx.globalCompositeOperation = 'source-out';
+            ctx.drawImage(base_image, 0, 0, 640, 480);
         }
         
     }, [video])

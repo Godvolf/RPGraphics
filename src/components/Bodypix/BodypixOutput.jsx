@@ -20,10 +20,12 @@ export default function BodypixOutput() {
 
     useEffect(() => {
 
+        let qualityFlag = 1;    // 0- fast, 1- accurate
+        let filterType = 2;     // 0 or 1 or 2
+
+        let hueOffset = 0;
         let base_image = new Image(640, 480);
         base_image.src = './src/components/Bodypix/Background/room.jpg';
-
-        let qualityFlag = 1;  // 0- fast, 1- accurate
 
         let neuralNetworkComplexity =  {
             architecture: qualityFlag ? 'ResNet50' : 'MobileNetV1',
@@ -45,13 +47,21 @@ export default function BodypixOutput() {
             const backgroundColor = {r: 0, g: 0, b: 0, a: 0};
             const backgroundDarkeningMask = bodyPix.toMask(person, foregroundColor, backgroundColor);
 
-            addBackground(backgroundDarkeningMask);
+            switch(filterType) {
+                case 0: addBackground(backgroundDarkeningMask);
+                        break;
+                case 1: modifyBackground(backgroundDarkeningMask);
+                        break;
+                case 2: modifyPerson(backgroundDarkeningMask);
+                        break;
+            }
         }
 
         async function runBodySegments() {
             const net = await bodyPix.load(neuralNetworkComplexity);
             setInterval(() => {
                 detect(net);
+                hueOffset = (hueOffset + 5) % 360;
             }, 100)
         }
         vid.onloadeddata = function() {
@@ -64,6 +74,25 @@ export default function BodypixOutput() {
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
             ctx.globalCompositeOperation = 'source-out';
             ctx.drawImage(base_image, 0, 0, 640, 480);
+        }
+
+        async function modifyBackground(backgroundDarkeningMask) {
+            if (!backgroundDarkeningMask) return;
+            var ctx = canvas.getContext('2d');
+            ctx.putImageData(backgroundDarkeningMask, 0, 0);
+            ctx.globalCompositeOperation = 'source-out';
+            ctx.drawImage(video, 0, 0, 640, 480);
+            ctx.filter = "blur(5px)";
+        }
+
+        async function modifyPerson(backgroundDarkeningMask) {
+            if (!backgroundDarkeningMask) return;
+            var ctx = canvas.getContext('2d');
+            ctx.filter = `hue-rotate(${hueOffset}deg)`;
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.putImageData(backgroundDarkeningMask, 0, 0);
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.drawImage(video, 0, 0, 640, 480);
         }
         
     }, [video])

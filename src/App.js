@@ -47,7 +47,7 @@ function App() {
           <img id="skull" className="masks" src="./src/components/Clmtrackr/Masks/skullmask.jpg" alt="skull"></img>
         </div>
       </div>
-      {/*<Clmtrackr />*/}
+      <Clmtrackr />
       <BodypixOutput />
     </div>
   );

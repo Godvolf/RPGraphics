@@ -21,7 +21,7 @@ export default function BodypixOutput() {
     useEffect(() => {
 
         let qualityFlag = 1;    // 0- fast, 1- accurate
-        let filterType = 2;     // 0 or 1 or 2
+        let filterType = 3;     // 0 or 1 or 2 or 3
 
         let hueOffset = 0;
         let base_image = new Image(640, 480);
@@ -53,6 +53,8 @@ export default function BodypixOutput() {
                 case 1: modifyBackground(backgroundDarkeningMask);
                         break;
                 case 2: modifyPerson(backgroundDarkeningMask);
+                        break;
+                case 3: combined(backgroundDarkeningMask);
                         break;
             }
         }
@@ -93,6 +95,27 @@ export default function BodypixOutput() {
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
             ctx.globalCompositeOperation = 'source-in';
             ctx.drawImage(video, 0, 0, 640, 480);
+        }
+        async function combined(backgroundDarkeningMask) {
+            if (!backgroundDarkeningMask) return;
+            let ctx = canvas.getContext('2d');
+            ctx.putImageData(backgroundDarkeningMask, 0, 0);
+            ctx.globalCompositeOperation = 'source-in';
+            ctx.filter = `hue-rotate(${hueOffset}deg)`;
+            ctx.drawImage(video, 0, 0, 640, 480);
+            //let myImageData = ctx.getImageData(0, 0, 640, 480);
+            //invertColors(myImageData.data);
+            //ctx.putImageData(myImageData, 0, 0);
+            ctx.filter = "none";    
+            ctx.globalCompositeOperation = 'destination-atop';
+            ctx.drawImage(base_image, 0, 0, 640, 480);
+        }
+        function invertColors(data) {
+            for (var i = 0; i < data.length; i+= 4) {
+              data[i] = data[i] ^ 255;
+              data[i+1] = data[i+1] ^ 255;
+              data[i+2] = data[i+2] ^ 255;
+            }
         }
         
     }, [video])

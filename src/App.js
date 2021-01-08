@@ -40,7 +40,7 @@ function App() {
     <div>
       <div className="container">
         <div id="container">
-          <video id="videoel" width="640" height="480" preload="auto" loop playsInline autoPlay></video>
+          <video id="videoel" className="hidden" width="640" height="480" preload="auto" loop playsInline autoPlay></video>
           <canvas id="clm-canvas" width="640" height="480"></canvas>
           <canvas id="bodypix-canvas" width="640" height="480"></canvas>
           <canvas id="webgl" width="640" height="480"></canvas>

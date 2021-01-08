@@ -58,3 +58,7 @@
   .masks {
     display: none;
   }
+
+  .hidden {
+    display: none;
+  }

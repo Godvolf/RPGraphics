@@ -25,7 +25,7 @@ export default function BodypixOutput() {
   let qualityFlag = 1;    // 0- fast, 1- accurate
   let imgSrc = './src/components/Bodypix/Background/room.jpg';
   let txtSettings = {
-      text: "XDDD",
+      text: "Host Zbigniew",
       offsetX: 0,
       offsetY: 200,
       color: "white",

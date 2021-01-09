@@ -24,6 +24,7 @@ export default function BodypixOutput() {
   }
   let qualityFlag = 1;    // 0- fast, 1- accurate
   let imgSrc = './src/components/Bodypix/Background/room.jpg';
+  let vidSrc = './src/components/Bodypix/Background/flower.webm';
   let txtSettings = {
       text: "Host Zbigniew",
       offsetX: 0,
@@ -36,14 +37,7 @@ export default function BodypixOutput() {
 
   // if we are going to support video backgrounds: 
   // https://stackoverflow.com/questions/19251983/dynamically-create-a-html5-video-element-without-it-being-shown-in-the-page/20611625
-  /*let videoBackground = document.createElement('video');
-  videoBackground.src = './src/components/Bodypix/Background/crash.mp4';
-  videoBackground.width="640";
-  videoBackground.height="480";
-  videoBackground.preload="auto";
-  videoBackground.loop = true;
-  videoBackground.playsInline = true;
-  videoBackground.autoplay = true;*/
+  
     useEffect(() => {
         if(!txtSettings.text) return;
         const txtCanvas = document.getElementById('text-canvas');
@@ -68,6 +62,15 @@ export default function BodypixOutput() {
         let hueOffset = 0;
         let base_image = new Image(640, 480);
         base_image.src = imgSrc;
+
+        let videoBackground = document.createElement('video');
+        videoBackground.src = vidSrc;
+        videoBackground.width="640";
+        videoBackground.height="480";
+        videoBackground.preload="auto";
+        videoBackground.loop = true;
+        videoBackground.playsInline = true;
+        videoBackground.autoplay = true;
 
         let neuralNetworkComplexity =  {
             architecture: qualityFlag ? 'ResNet50' : 'MobileNetV1',
@@ -124,7 +127,7 @@ export default function BodypixOutput() {
             //ctx.putImageData(myImageData, 0, 0);
             ctx.filter = "none";    
             ctx.globalCompositeOperation = 'destination-atop';
-            ctx.drawImage(base_image, 0, 0, 640, 480);
+            ctx.drawImage(videoBackground, 0, 0, 640, 480);
         }
 
         /*function customFilter(data) {

@@ -134,6 +134,6 @@ export default function BodypixOutput() {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-    }, [video, imgSrc])
+    }, [video, imgSrc, filterSettings])
     return(<span></span>);
 }

@@ -152,6 +152,7 @@ export default function faceDeformer () {
 	}
 
 	this.load = function(element, points, pModel, vertices) {
+		console.log(pModel);
 		pdmModel = pModel;
 		if (vertices) {
 			verticeMap = vertices;

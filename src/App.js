@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Clmtrackr from './components/Clmtrackr/Clmtrackr'
+import Clmtrackr2 from './components/Clmtrackr/Clmtrackr2'
 import BodypixOutput from './components/Bodypix/BodypixOutput';
 import './App.css';
 import './style.css';
@@ -51,8 +52,9 @@ function App() {
           <img id="orc" className="masks" src="./src/components/Clmtrackr/Masks/orc.jpg" alt="orc"></img>
         </div>
       </div>
-      <Clmtrackr />
+      
       <BodypixOutput />
+      <Clmtrackr2/>
     </div>
   );
 }

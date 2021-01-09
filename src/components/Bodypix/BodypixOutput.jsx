@@ -6,13 +6,33 @@ import * as tf from '@tensorflow/tfjs';
 export default function BodypixOutput() {
   const [video, setVid] = useState('');
 
+  //////////////Could be props//////////////////
+
+  // all available filters in array below
+  let filterType = [
+      "Rainbow",
+      "B&W",
+      "Sepia",
+      "Invert",
+      "Blur",
+      "Hue", //"smart recolor"
+    ][5]; //switch between filters for fast preview
+
+  let filterSettings = {
+      type: filterType, // one of filterTypes or null for no filters
+      value: 40,        // 1-100- strenght of filter
+  }
+  let qualityFlag = 1;    // 0- fast, 1- accurate
+  let imgSrc = './src/components/Bodypix/Background/room.jpg';
   let txtSettings = {
-      text: "Magiczny Król Sosnowca",
+      text: "XDDD",
       offsetX: 0,
       offsetY: 200,
       color: "white",
       font: "32px Consolas",
   }
+
+  //////////////////////////////////////////////
 
   // if we are going to support video backgrounds: 
   // https://stackoverflow.com/questions/19251983/dynamically-create-a-html5-video-element-without-it-being-shown-in-the-page/20611625
@@ -35,7 +55,7 @@ export default function BodypixOutput() {
             ctx.font = settings.font;
             ctx.strokeStyle = 'black';
             ctx.lineWidth = 8;
-            ctx.lineJoin="miter"; //Experiment with "bevel" & "round" for the effect you want!
+            ctx.lineJoin="miter";
             ctx.miterLimit=2;
             ctx.strokeText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
             ctx.fillStyle = settings.color;
@@ -44,13 +64,10 @@ export default function BodypixOutput() {
     }, [txtSettings]);
 
     useEffect(() => {
-
-        let qualityFlag = 1;    // 0- fast, 1- accurate
-        let filterType = 3;     // 0 or 1 or 2 or 3
-
+        const canvas = document.getElementById('clm-canvas');
         let hueOffset = 0;
         let base_image = new Image(640, 480);
-        base_image.src = './src/components/Bodypix/Background/room.jpg';
+        base_image.src = imgSrc;
 
         let neuralNetworkComplexity =  {
             architecture: qualityFlag ? 'ResNet50' : 'MobileNetV1',
@@ -58,8 +75,6 @@ export default function BodypixOutput() {
             multiplier: qualityFlag ? 1 : 0.75,
             quantBytes: qualityFlag ? 1 : 4
         };
-
-        const canvas = document.getElementById('clm-canvas');
 
         tf.disableDeprecationWarnings()
         let vid = document.getElementById('videoel');
@@ -72,77 +87,53 @@ export default function BodypixOutput() {
             const backgroundColor = {r: 0, g: 0, b: 0, a: 0};
             const backgroundDarkeningMask = bodyPix.toMask(person, foregroundColor, backgroundColor);
 
-            switch(filterType) {
-                case 0: addBackground(backgroundDarkeningMask);
-                        break;
-                case 1: modifyBackground(backgroundDarkeningMask);
-                        break;
-                case 2: modifyPerson(backgroundDarkeningMask);
-                        break;
-                case 3: combined(backgroundDarkeningMask);
-                        break;
-            }
+            combined(backgroundDarkeningMask);
         }
 
         async function runBodySegments() {
             const net = await bodyPix.load(neuralNetworkComplexity);
             setInterval(() => {
                 detect(net);
-                hueOffset = (hueOffset + 5) % 360;
+                hueOffset = (hueOffset + 7) % 360;
             }, 100)
         }
         vid.onloadeddata = function() {
             runBodySegments();
         }
 
-        async function addBackground(backgroundDarkeningMask) {
-            if (!backgroundDarkeningMask) return;
-            var ctx = canvas.getContext('2d');
-            ctx.putImageData(backgroundDarkeningMask, 0, 0);
-            ctx.globalCompositeOperation = 'source-out';
-            ctx.drawImage(base_image, 0, 0, 640, 480);
-        }
-
-        async function modifyBackground(backgroundDarkeningMask) {
-            if (!backgroundDarkeningMask) return;
-            var ctx = canvas.getContext('2d');
-            ctx.putImageData(backgroundDarkeningMask, 0, 0);
-            ctx.globalCompositeOperation = 'source-out';
-            ctx.drawImage(video, 0, 0, 640, 480);
-            ctx.filter = "blur(5px)";
-        }
-
-        async function modifyPerson(backgroundDarkeningMask) {
-            if (!backgroundDarkeningMask) return;
-            var ctx = canvas.getContext('2d');
-            ctx.filter = `hue-rotate(${hueOffset}deg)`;
-            ctx.globalCompositeOperation = 'destination-over';
-            ctx.putImageData(backgroundDarkeningMask, 0, 0);
-            ctx.globalCompositeOperation = 'source-in';
-            ctx.drawImage(video, 0, 0, 640, 480);
-        }
         async function combined(backgroundDarkeningMask) {
             if (!backgroundDarkeningMask) return;
             let ctx = canvas.getContext('2d');
             ctx.putImageData(backgroundDarkeningMask, 0, 0);
             ctx.globalCompositeOperation = 'source-in';
-            ctx.filter = `hue-rotate(${hueOffset}deg)`;
+            if(filterSettings.type) {
+                switch(filterSettings.type) {
+                    case "Rainbow": ctx.filter = `hue-rotate(${hueOffset}deg)`; break;
+                    case "B&W": ctx.filter = `grayscale(${filterSettings.value}%)`; break;
+                    case "Invert": ctx.filter = `invert(${filterSettings.value}%)`; break;
+                    case "Sepia": ctx.filter = `sepia(${filterSettings.value}%)`; break;
+                    case "Blur": ctx.filter = `blur(${filterSettings.value}px)`; break;
+                    case "Hue": ctx.filter = `hue-rotate(${filterSettings.value*360/100}deg)`; break;
+                    default: console.log("no such filter"); break;
+                }
+            }
             ctx.drawImage(video, 0, 0, 640, 480);
+            //Custom filters:
             //let myImageData = ctx.getImageData(0, 0, 640, 480);
-            //invertColors(myImageData.data);
+            //customFilter(myImageData.data);
             //ctx.putImageData(myImageData, 0, 0);
             ctx.filter = "none";    
             ctx.globalCompositeOperation = 'destination-atop';
             ctx.drawImage(base_image, 0, 0, 640, 480);
         }
-        function invertColors(data) {
+
+        /*function customFilter(data) {
             for (var i = 0; i < data.length; i+= 4) {
               data[i] = data[i] ^ 255;
               data[i+1] = data[i+1] ^ 255;
               data[i+2] = data[i+2] ^ 255;
             }
-        }
-        
-    }, [video])
+        }*/
+    }, [video, imgSrc])
     return(<span></span>);
 }

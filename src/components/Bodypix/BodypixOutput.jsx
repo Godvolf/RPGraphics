@@ -6,6 +6,14 @@ import * as tf from '@tensorflow/tfjs';
 export default function BodypixOutput() {
   const [video, setVid] = useState('');
 
+  let txtSettings = {
+      text: "Magiczny Król Sosnowca",
+      offsetX: 0,
+      offsetY: 200,
+      color: "white",
+      font: "32px Consolas",
+  }
+
   // if we are going to support video backgrounds: 
   // https://stackoverflow.com/questions/19251983/dynamically-create-a-html5-video-element-without-it-being-shown-in-the-page/20611625
   /*let videoBackground = document.createElement('video');
@@ -16,7 +24,24 @@ export default function BodypixOutput() {
   videoBackground.loop = true;
   videoBackground.playsInline = true;
   videoBackground.autoplay = true;*/
+    useEffect(() => {
+        if(!txtSettings.text) return;
+        const txtCanvas = document.getElementById('text-canvas');
+        let ctx = txtCanvas.getContext('2d');
+        ctx.textAlign = "center";
+        drawStroked(txtSettings)
 
+        function drawStroked(settings) {
+            ctx.font = settings.font;
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 8;
+            ctx.lineJoin="miter"; //Experiment with "bevel" & "round" for the effect you want!
+            ctx.miterLimit=2;
+            ctx.strokeText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
+            ctx.fillStyle = settings.color;
+            ctx.fillText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
+        }
+    }, [txtSettings]);
 
     useEffect(() => {
 

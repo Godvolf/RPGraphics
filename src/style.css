@@ -55,6 +55,12 @@
     /*margin : 0px auto;*/
   }
 
+  #text-canvas{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+
   .masks {
     display: none;
   }

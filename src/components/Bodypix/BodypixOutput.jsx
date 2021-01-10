@@ -3,20 +3,8 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 
 
-export default function BodypixOutput(width, height, fillterType) {
-  const [video, setVid] = useState('');
-
+export default function BodypixOutput(props) {
   //////////////Could be props//////////////////
-
-  // all available filters in array below
-  let filterType = [
-      "Rainbow",
-      "B&W",
-      "Sepia",
-      "Invert",
-      "Blur",
-      "Hue", //"smart recolor"
-    ][5]; //switch between filters for fast preview
 
   let architectureComplexity = [
       "MobileNet basic",
@@ -25,17 +13,18 @@ export default function BodypixOutput(width, height, fillterType) {
       "ResNet basic",
       "ResNet standard",
       "ResNet full",
-    ][2]; //switch between settings for fast preview
+    ][1]; //switch between settings for fast preview
 
   let imgSrc = './src/components/Bodypix/Background/room.jpg';
   let vidSrc = './src/components/Bodypix/Background/flower.webm';
 
     useEffect(() => {
+        let isCancelled = false;
         let width = window.innerWidth;
         let height = window.innerHeight;
         let backgroundType = "img"; // vid, img
         let filterSettings = {
-            type: fillterType, // one of filterTypes or null for no filters
+            type: props.fillterType, // one of filterTypes or null for no filters
             value: 40,        // 1-100- strenght of filter
         }
 
@@ -44,6 +33,7 @@ export default function BodypixOutput(width, height, fillterType) {
         let imageBackground = new Image(width, height);
         imageBackground.src = imgSrc;
 
+        /*
         let videoBackground = document.createElement('video');
         videoBackground.src = vidSrc;
         videoBackground.width = width;
@@ -52,13 +42,14 @@ export default function BodypixOutput(width, height, fillterType) {
         videoBackground.loop = true;
         videoBackground.playsInline = true;
         videoBackground.autoplay = true;
+        */
 
+        let detection;
         tf.disableDeprecationWarnings()
         let vid = document.getElementById('videoel');
-        setVid(vid);
 
         async function detect(net) {
-            const person = await net.segmentPerson(video);
+            const person = await net.segmentPerson(vid);
 
             const foregroundColor = {r: 0, g: 0, b: 0, a: 255};
             const backgroundColor = {r: 0, g: 0, b: 0, a: 0};
@@ -69,14 +60,17 @@ export default function BodypixOutput(width, height, fillterType) {
 
         async function runBodySegments() {
             const net = await bodyPix.load(getNeuralNetworkComplexity());
-            setInterval(() => {
-                detect(net);
-                hueOffset = (hueOffset + 7) % 360;
-            }, 100)
+            detection = setInterval(() => {
+                if (!isCancelled) {
+                    detect(net);
+                    hueOffset = (hueOffset + 7) % 360;
+                } else {
+                    clearInterval(detection);
+                }
+            }, 300);
         }
-        vid.onloadeddata = function() {
-            runBodySegments();
-        }
+
+        runBodySegments();
 
         async function combined(backgroundDarkeningMask) {
             if (!backgroundDarkeningMask) return;
@@ -94,7 +88,7 @@ export default function BodypixOutput(width, height, fillterType) {
                     default: break;
                 }
             }
-            ctx.drawImage(video, 0, 0, width, height);
+            ctx.drawImage(vid, 0, 0, width, height);
             //Custom filters:
             //let myImageData = ctx.getImageData(0, 0, 640, 480);
             //customFilter(myImageData.data);
@@ -104,7 +98,9 @@ export default function BodypixOutput(width, height, fillterType) {
             if(backgroundType === "img") {
                 ctx.drawImage(imageBackground, 0, 0, width, height);
             } else {
+                /*
                 ctx.drawImage(videoBackground, 0, 0, width, height);
+                */
             }
         }
 
@@ -156,6 +152,14 @@ export default function BodypixOutput(width, height, fillterType) {
                         quantBytes: 4
                     });
                 }
+                default : {
+                    return ({
+                        architecture: 'MobileNetV1',
+                        outputStride: 16,
+                        multiplier: 0.5,
+                        quantBytes: 1
+                    });
+                }
             }
         }
 
@@ -166,6 +170,12 @@ export default function BodypixOutput(width, height, fillterType) {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-    }, [imgSrc, vidSrc, architectureComplexity, fillterType, width, height])
+        return( () => {
+            isCancelled = true;
+            let ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, width, height);
+        }
+        )
+    }, [props.fillterType])
     return(<span></span>);
 }

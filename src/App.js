@@ -28,6 +28,7 @@ function App() {
   const [textColor, setTextColor] = useState('black');
   
   const [backgroundChecked, setBackgroundChecked] = useState(false);
+  const [startBodypixSeg, setStartBodypixSeg] = useState(false);
   const [fillterType, setFillterType] = useState('None');
 
   const [faceMaskChecked, setFaceMaskChecked] = useState(false);
@@ -193,6 +194,7 @@ function App() {
     setStartClmMasking(faceMaskChecked);
     setMaskSelected(data.masks);
     setStartClmDeform(faceDeformChecked);
+    setStartBodypixSeg(backgroundChecked);
     setdeformSelected(data.deforms);
     handleCloseModal();
   }
@@ -354,7 +356,7 @@ function App() {
         </Dialog>
       </div>
       {startClmMasking && <FaceMask mask={maskSelected} />}
-      {backgroundChecked && <BodypixOutput fillterType={fillterType}/>}
+      {startBodypixSeg && <BodypixOutput fillterType={fillterType}/>}
       {startClmDeform && <FaceDeform deform={deformSelected} />}
     </div>
   );

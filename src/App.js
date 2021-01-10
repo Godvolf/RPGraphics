@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Clmtrackr from './components/Clmtrackr/Clmtrackr'
+import FaceMask from './components/Clmtrackr/FaceMask'
+import FaceDeform from './components/Clmtrackr/FaceDeform';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -10,7 +11,6 @@ import BodypixOutput from './components/Bodypix/BodypixOutput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useForm, Controller } from "react-hook-form";
-
 
 import './App.css';
 import './style.css';
@@ -31,6 +31,12 @@ function App() {
   const [fillterType, setFillterType] = useState('None');
 
   const [faceMaskChecked, setFaceMaskChecked] = useState(false);
+  const [startClmMasking, setStartClmMasking] = useState(false);
+  const [maskSelected, setMaskSelected] = useState(4);
+
+  const [faceDeformChecked, setFaceDeformChecked] = useState(false);
+  const [startClmDeform, setStartClmDeform] = useState(false);
+  const [deformSelected, setdeformSelected] = useState(10);
   
   const fillters = [
     { value: "None", text: "None"},
@@ -41,6 +47,28 @@ function App() {
     { value: "Blur", text: "Blur" },
     { value: "Hue", text: "Hue" },
 ];
+
+  const masks = [
+    { value: 4, text: "None"},
+    { value: 0, text: "Skull"},
+    { value: 1, text: "Half-elf"},
+    { value: 2, text: "Elf"},
+    { value: 3, text: "Orc"}
+  ]
+
+  const deforms = [
+    { value: 0, text: "unwell"},
+    { value: 1, text: "inca" } ,
+    { value: 2, text: "cheery" },
+    { value: 3, text: "dopey" },
+    { value: 4, text: "longface" },
+    { value: 5, text: "lucky" },
+    { value: 6, text: "overcute" },
+    { value: 7, text: "aloof" },
+    { value: 8, text: "evil" },
+    { value: 9, text: "artificial" },
+    { value: 10, text: "none" }
+  ]
 
 
   /* Handlers */
@@ -54,6 +82,16 @@ function App() {
 
   const handlefaceMaskCheckbox = (event) => {
     setFaceMaskChecked(event.target.checked);
+    if (event.target.checked) {
+      setFaceDeformChecked(false);
+    }
+  };
+
+  const handlefaceDeformCheckbox = (event) => {
+    setFaceDeformChecked(event.target.checked);
+    if (event.target.checked) {
+      setFaceMaskChecked(false);
+    }
   };
 
   const handleCloseModal = () => {
@@ -149,10 +187,13 @@ function App() {
 
   const { handleSubmit, control } = useForm();
   const onSubmit = data => { 
-    console.log(data);
     setTextValue(data.text);
     setTextColor(data.textColor);
-    setFillterType(data.fillterType);
+    setFillterType(data.fillters);
+    setStartClmMasking(faceMaskChecked);
+    setMaskSelected(data.masks);
+    setStartClmDeform(faceDeformChecked);
+    setdeformSelected(data.deforms);
     handleCloseModal();
   }
   
@@ -223,7 +264,7 @@ function App() {
                     }
                     label="Enable body segmentation"
                   />
-                    <InputLabel htmlFor="trinity-select">
+                    <InputLabel htmlFor="fillter-select">
                        Choose fillter type
                     </InputLabel>
                     <Controller
@@ -253,6 +294,54 @@ function App() {
                     }
                     label="Enable face masking"
                   />
+                  <InputLabel htmlFor="mask-select">
+                       Choose mask type
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="masks"
+                    defaultValue={4}
+                    as={
+                      <Select id="mask-select" disabled={!faceMaskChecked}>
+                          {masks.map((maskType) => {
+                            return(
+                            <MenuItem key={maskType.text} value={maskType.value}>
+                                {maskType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
+                </div>
+                <div id="faceDeformOptions" className="dialogBox">
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                      checked={faceDeformChecked}
+                      onChange={handlefaceDeformCheckbox}
+                      color="primary"
+                    />
+                    }
+                    label="Enable face deformation"
+                  />
+                    <InputLabel htmlFor="deform-select">
+                      Choose deform type
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="deforms"
+                    defaultValue={10}
+                    as={
+                      <Select id="deform-select" disabled={!faceDeformChecked}>
+                          {deforms.map((maskType) => {
+                            return(
+                            <MenuItem key={maskType.text} value={maskType.value}>
+                                {maskType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
                 </div>
               </div>
               </form>
@@ -264,10 +353,9 @@ function App() {
             </DialogActions>
         </Dialog>
       </div>
-      {/*
-      <Clmtrackr/>
-      */}
-      <BodypixOutput width={width} height={height} fillterType={fillterType}/>
+      {startClmMasking && <FaceMask mask={maskSelected} />}
+      {backgroundChecked && <BodypixOutput fillterType={fillterType}/>}
+      {startClmDeform && <FaceDeform deform={deformSelected} />}
     </div>
   );
 }

@@ -174,16 +174,12 @@ function App() {
   }, [width, height, video, textValue, textColor]);
 
   const updateWindowDimensions = (e) => {
-    if (e) {
-    e.preventDefault();
-    }
     setWidth(window.innerWidth);
     setHeight(window.innerHeight);
   }
 
   useEffect(() => {
     const onMouseClick = (e) => {
-      e.preventDefault();
       if (e.target.id === 'text-canvas') {
         setMouseClicked(!mouseClicked);
       }
@@ -231,7 +227,7 @@ function App() {
     window.removeEventListener('resize', updateWindowDimensions);
   }}, [video])
 
-  const { handleSubmit, control } = useForm();
+  const { handleSubmit, control, register } = useForm();
   const onSubmit = data => { 
     setTextValue(data.text);
     setTextColor(data.textColor);
@@ -244,6 +240,7 @@ function App() {
     setArchType(data.archs);
     setImgSelected(data.pictures);
     setVideoSelected(data.videos);
+    console.log(data.loadPicture);
     handleCloseModal();
   }
   
@@ -382,6 +379,12 @@ function App() {
                       </Select>
                     }
                     />
+                    <div>
+                    <label for="loadPicture">Load your picture:</label>
+                    <input type="file" ref={register} disabled={!imgCheckBox}
+                          id="loadPicture" name="loadPicture"
+                          accept="image/png, image/jpeg"/>
+                    </div>
                   </div>
                   <div>
                     <FormControlLabel

@@ -11,6 +11,7 @@ import BodypixOutput from './components/Bodypix/BodypixOutput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useForm, Controller } from "react-hook-form";
+import consts from "./consts";
 
 import './App.css';
 import './style.css';
@@ -161,21 +162,21 @@ function App() {
           ctx.lineWidth = 8;
           ctx.lineJoin="miter";
           ctx.miterLimit=2;
-          ctx.strokeText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
+          ctx.strokeText(settings.text, consts.width/2 + settings.offsetX, consts.height/2 - settings.offsetY);
           ctx.fillStyle = settings.color;
-          ctx.fillText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
+          ctx.fillText(settings.text, consts.width/2 + settings.offsetX, consts.height/2 - settings.offsetY);
       }
     }
     return ( () => {
       let txtCanvas = document.getElementById('text-canvas');
       let ctx = txtCanvas.getContext('2d');
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, consts.width, consts.height);
     })
-  }, [width, height, video, textValue, textColor]);
+  }, [video, textValue, textColor]);
 
   const updateWindowDimensions = (e) => {
-    setWidth(window.innerWidth);
-    setHeight(window.innerHeight);
+    //setWidth(window.innerWidth);
+    //setHeight(window.innerHeight);
   }
 
   useEffect(() => {
@@ -247,12 +248,12 @@ function App() {
   return (
     <div>
       <div className="container">
-          <video id="videoel" preload="auto" loop playsInline autoPlay width={width} height={height}></video>
+          <video id="videoel" preload="auto" loop playsInline autoPlay width={consts.width} height={consts.height}></video>
           
-          <canvas id="clm-canvas" width={width} height={height}></canvas>
-          <canvas id="bodypix-canvas" width={width} height={height}></canvas>
-          <canvas id="webgl" width="800px" height="600px"></canvas>
-          <canvas id="text-canvas" width={width} height={height}></canvas>
+          <canvas id="clm-canvas" width={consts.width} height={consts.height}></canvas>
+          <canvas id="bodypix-canvas" width={consts.width} height={consts.height}></canvas>
+          <canvas id="webgl" width={consts.width} height={consts.height}></canvas>
+          <canvas id="text-canvas" width={consts.width} height={consts.height}></canvas>
 
           {mouseClicked &&
             <div id="options-button">

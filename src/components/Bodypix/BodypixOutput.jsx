@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
+import consts from "../../consts";
 
 
 export default function BodypixOutput(props) {
@@ -12,8 +13,6 @@ export default function BodypixOutput(props) {
         let vidSrc = './src/components/Bodypix/Background/' + props.video;
 
         let isCancelled = false;
-        let width = window.innerWidth;
-        let height = window.innerHeight;
         let videoBackground = null;
         let backgroundType;
         if (props.imgSelected) {
@@ -22,8 +21,8 @@ export default function BodypixOutput(props) {
             backgroundType = "vid";
             videoBackground = document.createElement('video');
             videoBackground.src = vidSrc;
-            videoBackground.width = width;
-            videoBackground.height = height;
+            videoBackground.width = consts.width;
+            videoBackground.height = consts.height;
             videoBackground.preload="auto";
             videoBackground.loop = true;
             videoBackground.playsInline = true;
@@ -38,7 +37,7 @@ export default function BodypixOutput(props) {
 
         const canvas = document.getElementById('clm-canvas');
         let hueOffset = 0;
-        let imageBackground = new Image(width, height);
+        let imageBackground = new Image(consts.width, consts.height);
         imageBackground.src = imgSrc;
 
         let detection;
@@ -64,7 +63,7 @@ export default function BodypixOutput(props) {
                 } else {
                     clearInterval(detection);
                 }
-            }, 300);
+            }, consts.bpDelay);
         }
 
         runBodySegments();
@@ -85,7 +84,7 @@ export default function BodypixOutput(props) {
                     default: break;
                 }
             }
-            ctx.drawImage(vid, 0, 0, width, height);
+            ctx.drawImage(vid, 0, 0, consts.width, consts.height);
             //Custom filters:
             //let myImageData = ctx.getImageData(0, 0, 640, 480);
             //customFilter(myImageData.data);
@@ -93,9 +92,9 @@ export default function BodypixOutput(props) {
             ctx.filter = "none";    
             ctx.globalCompositeOperation = 'destination-atop';
             if(backgroundType === "img") {
-                ctx.drawImage(imageBackground, 0, 0, width, height);
+                ctx.drawImage(imageBackground, 0, 0, consts.width, consts.height);
             } else if(backgroundType === "vid") {
-                ctx.drawImage(videoBackground, 0, 0, width, height);
+                ctx.drawImage(videoBackground, 0, 0, consts.width, consts.height);
             }
         }
 

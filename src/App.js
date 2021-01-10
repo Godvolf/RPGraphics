@@ -181,6 +181,7 @@ function App() {
 
   useEffect(() => {
     const onMouseClick = (e) => {
+      console.log(e.target.id);
       if (e.target.id === 'text-canvas') {
         setMouseClicked(!mouseClicked);
       }

@@ -3,7 +3,7 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 
 
-export default function BodypixOutput() {
+export default function BodypixOutput(width, height) {
   const [video, setVid] = useState('');
 
   //////////////Could be props//////////////////
@@ -18,19 +18,8 @@ export default function BodypixOutput() {
       "Hue", //"smart recolor"
     ][5]; //switch between filters for fast preview
 
-  let filterSettings = {
-      type: filterType, // one of filterTypes or null for no filters
-      value: 40,        // 1-100- strenght of filter
-  }
-  let qualityFlag = 1;    // 0- fast, 1- accurate
   let imgSrc = './src/components/Bodypix/Background/room.jpg';
-  let txtSettings = {
-      text: "Host Zbigniew",
-      offsetX: 0,
-      offsetY: 200,
-      color: "white",
-      font: "32px Consolas",
-  }
+
 
   //////////////////////////////////////////////
 
@@ -44,29 +33,19 @@ export default function BodypixOutput() {
   videoBackground.loop = true;
   videoBackground.playsInline = true;
   videoBackground.autoplay = true;*/
-    useEffect(() => {
-        if(!txtSettings.text) return;
-        const txtCanvas = document.getElementById('text-canvas');
-        let ctx = txtCanvas.getContext('2d');
-        ctx.textAlign = "center";
-        drawStroked(txtSettings)
 
-        function drawStroked(settings) {
-            ctx.font = settings.font;
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = 8;
-            ctx.lineJoin="miter";
-            ctx.miterLimit=2;
-            ctx.strokeText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
-            ctx.fillStyle = settings.color;
-            ctx.fillText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
+    useEffect(() => {
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        let qualityFlag = 0;    // 0- fast, 1- accurate
+        let filterSettings = {
+            type: filterType, // one of filterTypes or null for no filters
+            value: 40,        // 1-100- strenght of filter
         }
-    }, [txtSettings]);
 
-    useEffect(() => {
         const canvas = document.getElementById('clm-canvas');
         let hueOffset = 0;
-        let base_image = new Image(640, 480);
+        let base_image = new Image(width, height);
         base_image.src = imgSrc;
 
         let neuralNetworkComplexity =  {
@@ -117,14 +96,14 @@ export default function BodypixOutput() {
                     default: console.log("no such filter"); break;
                 }
             }
-            ctx.drawImage(video, 0, 0, 640, 480);
+            ctx.drawImage(video, 0, 0, width, height);
             //Custom filters:
             //let myImageData = ctx.getImageData(0, 0, 640, 480);
             //customFilter(myImageData.data);
             //ctx.putImageData(myImageData, 0, 0);
             ctx.filter = "none";    
             ctx.globalCompositeOperation = 'destination-atop';
-            ctx.drawImage(base_image, 0, 0, 640, 480);
+            ctx.drawImage(base_image, 0, 0, width, height);
         }
 
         /*function customFilter(data) {
@@ -134,6 +113,6 @@ export default function BodypixOutput() {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-    }, [video, imgSrc, filterSettings])
+    }, [imgSrc, filterType, width, height])
     return(<span></span>);
 }

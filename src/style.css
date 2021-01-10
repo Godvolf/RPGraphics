@@ -49,22 +49,23 @@
     filter : fliph; /*IE*/
     
   }
-  #container {
-    position : relative;
-    width : 370px;
-    /*margin : 0px auto;*/
-  }
 
-  #text-canvas{
-    position: absolute;
-    top: 0px;
-    left: 0px;
-  }
+#text-canvas{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
 
-  .masks {
-    display: none;
-  }
+.hidden {
+  display: none;
+}
 
-  .hidden {
-    display: none;
-  }
+#options-button {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+}
+
+#text-options {
+  border: 1px solid black;
+}

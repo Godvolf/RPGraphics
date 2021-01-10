@@ -15,8 +15,11 @@ module.exports = function(_env, argv) {
       port: 3000,
       hot: true,
       clientLogLevel: 'silent',
-      host: '0.0.0.0',
-      historyApiFallback: true
+      host: 'localhost',
+      historyApiFallback: true,
+      open: {
+        app: ['Opera']
+      }
     },
     module: {
       rules: [

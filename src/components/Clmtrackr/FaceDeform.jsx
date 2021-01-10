@@ -5,14 +5,15 @@ import { pModel } from './models/pmodel.js';
 import { presets } from './models/presets';
 import { mouth_vertices } from './models/mouth_vertices';
 import { extendVertices } from './models/extendVerices';
+import consts from "../../consts";
 
 export default function Clmtrackr2(props) {
 
   const [video, setVid] = useState('');
 
   useEffect(() => {
-    let width = window.innerWidth;
-    let height = window.innerHeight;
+    let width = consts.width;
+    let height = consts.height;
 
     var fd = new faceDeformer();
 

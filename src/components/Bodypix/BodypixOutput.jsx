@@ -46,6 +46,7 @@ export default function BodypixOutput(props) {
         let vid = document.getElementById('videoel');
 
         async function detect(net) {
+            console.log('lece');
             const person = await net.segmentPerson(vid);
 
             const foregroundColor = {r: 0, g: 0, b: 0, a: 255};
@@ -165,13 +166,24 @@ export default function BodypixOutput(props) {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-        return( () => {
+        function resolveAfter2Seconds(x) {
+            return new Promise(resolve => {
+              setTimeout(() => {
+                let ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, consts.width, consts.height);
+                let vid = document.getElementById('videoel');
+                ctx = vid.getContext('2d');
+                ctx.clearRect(0, 0, consts.width, consts.height);
+                resolve(x);
+              }, 2000);
+            });
+          }
+        return( async () => {
             isCancelled = true;
-            let ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, consts.width, consts.height);
-            window.location.reload();
+            
+            return await resolveAfter2Seconds(1).then();
         }
         )
-    }, [props.fillterType, props.imgSelected])
+    }, [props.fillterType, props.imgSelected, props.picture, props.architectureComplexity, props.vidSelected, props.video])
     return(<span></span>);
 }

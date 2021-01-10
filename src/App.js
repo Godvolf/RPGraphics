@@ -33,7 +33,7 @@ function App() {
   const [fillterType, setFillterType] = useState('None');
   const [archType, setArchType] = useState('MobileNet standard');
   const [imgCheckBox, setImgCheckbox] = useState(false);
-  const [imgSelected, setImgSelected] = useState('forest.jpg');
+  const [imgSelected, setImgSelected] = useState('');
   const [vidCheckBox, setVidCheckbox] = useState(false);
   const [vidSelected, setVideoSelected] = useState('flower.webm');
 
@@ -232,16 +232,16 @@ function App() {
   const onSubmit = data => { 
     setTextValue(data.text);
     setTextColor(data.textColor);
+    setImgSelected(data.pictures);
+    setVideoSelected(data.videos);
     setFillterType(data.fillters);
     setStartClmMasking(faceMaskChecked);
     setMaskSelected(data.masks);
     setStartClmDeform(faceDeformChecked);
-    setStartBodypixSeg(backgroundChecked);
     setdeformSelected(data.deforms);
     setArchType(data.archs);
-    setImgSelected(data.pictures);
-    setVideoSelected(data.videos);
-    console.log(data.loadPicture);
+    console.log(data.pictures, 'eee');
+    setStartBodypixSeg(backgroundChecked);
     handleCloseModal();
   }
   

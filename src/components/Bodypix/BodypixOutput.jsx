@@ -9,6 +9,7 @@ export default function BodypixOutput(props) {
 
 
     useEffect(() => {
+        console.log(props.picture);
         let imgSrc = './src/components/Bodypix/Background/' + props.picture;
         let vidSrc = './src/components/Bodypix/Background/' + props.video;
 
@@ -167,9 +168,9 @@ export default function BodypixOutput(props) {
         return( () => {
             isCancelled = true;
             let ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, consts.width, consts.height);
         }
         )
-    }, [props.fillterType])
+    }, [props.fillterType, props.imgSelected])
     return(<span></span>);
 }

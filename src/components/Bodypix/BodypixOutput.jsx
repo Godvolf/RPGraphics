@@ -14,11 +14,20 @@ export default function BodypixOutput(props) {
         let isCancelled = false;
         let width = window.innerWidth;
         let height = window.innerHeight;
+        let videoBackground = null;
         let backgroundType;
         if (props.imgSelected) {
             backgroundType = "img";
         } else if (props.vidSelected) {
             backgroundType = "vid";
+            videoBackground = document.createElement('video');
+            videoBackground.src = vidSrc;
+            videoBackground.width = width;
+            videoBackground.height = height;
+            videoBackground.preload="auto";
+            videoBackground.loop = true;
+            videoBackground.playsInline = true;
+            videoBackground.autoplay = true;
         } else {
             backgroundType = "none";
         }
@@ -86,14 +95,6 @@ export default function BodypixOutput(props) {
             if(backgroundType === "img") {
                 ctx.drawImage(imageBackground, 0, 0, width, height);
             } else if(backgroundType === "vid") {
-                let videoBackground = document.createElement('video');
-                videoBackground.src = vidSrc;
-                videoBackground.width = width;
-                videoBackground.height = height;
-                videoBackground.preload="auto";
-                videoBackground.loop = true;
-                videoBackground.playsInline = true;
-                videoBackground.autoplay = true;
                 ctx.drawImage(videoBackground, 0, 0, width, height);
             }
         }

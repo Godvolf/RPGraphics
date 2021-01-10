@@ -166,6 +166,6 @@ export default function BodypixOutput(width, height, fillterType) {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-    }, [imgSrc, fillterType, width, height])
+    }, [imgSrc, vidSrc, architectureComplexity, fillterType, width, height])
     return(<span></span>);
 }

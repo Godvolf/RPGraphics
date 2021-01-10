@@ -69,3 +69,8 @@
 #text-options {
   border: 1px solid black;
 }
+
+.dialogBox {
+  border-bottom: 1px solid blue;
+  padding-bottom: 10px;
+}

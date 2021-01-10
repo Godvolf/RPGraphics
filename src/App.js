@@ -5,7 +5,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
-import { ReorderTwoTone } from '@material-ui/icons';
+import { ChatTwoTone, ReorderTwoTone } from '@material-ui/icons';
 import { Button, TextField, InputLabel, MenuItem, Select } from '@material-ui/core';
 import BodypixOutput from './components/Bodypix/BodypixOutput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -30,6 +30,11 @@ function App() {
   const [backgroundChecked, setBackgroundChecked] = useState(false);
   const [startBodypixSeg, setStartBodypixSeg] = useState(false);
   const [fillterType, setFillterType] = useState('None');
+  const [archType, setArchType] = useState('MobileNet standard');
+  const [imgCheckBox, setImgCheckbox] = useState(false);
+  const [imgSelected, setImgSelected] = useState('forest.jpg');
+  const [vidCheckBox, setVidCheckbox] = useState(false);
+  const [vidSelected, setVideoSelected] = useState('flower.webm');
 
   const [faceMaskChecked, setFaceMaskChecked] = useState(false);
   const [startClmMasking, setStartClmMasking] = useState(false);
@@ -48,6 +53,27 @@ function App() {
     { value: "Blur", text: "Blur" },
     { value: "Hue", text: "Hue" },
 ];
+
+  const archs = [
+    {value: "MobileNet basic", text: "MobileNet basic"},
+    {value: "MobileNet standard", text: "MobileNet standard"},
+    {value: "MobileNet full", text: "MobileNet full"},
+    {value: "ResNet basic", text: "ResNet basic"},
+    {value: "ResNet standard", text: "ResNet standard"},
+    {value: "ResNet full", text: "ResNet full"},
+  ];
+
+  const pictures = [
+    {value: "forest.jpg", text: "Forest"},
+    {value: "kids.jpg", text: "Kids"},
+    {value: "room.jpg", text: "Room"},
+    {value: "starFox.jpg", text: "StarFox"},
+    {value: "win.jpg", text: "Windows"},
+  ];
+
+  const videos = [
+    {value: 'flower.webm', text: 'Flowers'}
+  ]
 
   const masks = [
     { value: 4, text: "None"},
@@ -95,6 +121,20 @@ function App() {
     }
   };
 
+  const handleImgCheckbox = (event) => {
+    setImgCheckbox(event.target.checked);
+    if (event.target.checked) {
+      setVidCheckbox(false);
+    }
+  };
+
+  const handleVidCheckbox = (event) => {
+    setVidCheckbox(event.target.checked);
+    if (event.target.checked) {
+      setImgCheckbox(false);
+    }
+  };
+
   const handleCloseModal = () => {
     setModal(false);
   }
@@ -126,6 +166,11 @@ function App() {
           ctx.fillText(settings.text, txtCanvas.width/2 + settings.offsetX, txtCanvas.height/2 - settings.offsetY);
       }
     }
+    return ( () => {
+      let txtCanvas = document.getElementById('text-canvas');
+      let ctx = txtCanvas.getContext('2d');
+      ctx.clearRect(0, 0, width, height);
+    })
   }, [width, height, video, textValue, textColor]);
 
   const updateWindowDimensions = (e) => {
@@ -196,6 +241,9 @@ function App() {
     setStartClmDeform(faceDeformChecked);
     setStartBodypixSeg(backgroundChecked);
     setdeformSelected(data.deforms);
+    setArchType(data.archs);
+    setImgSelected(data.pictures);
+    setVideoSelected(data.videos);
     handleCloseModal();
   }
   
@@ -240,8 +288,9 @@ function App() {
                     }
                     label="Text"
                   />
+                  <div>
                   <Controller
-                    as={<TextField disabled={!textChecked} variant="filled"/>}
+                    as={<TextField style={{ paddingRight: '5px' }} disabled={!textChecked} variant="filled"/>}
                     name="text"
                     label="Text"
                     control={control}
@@ -254,6 +303,7 @@ function App() {
                     control={control}
                     defaultValue=""
                   />
+                  </div>
                 </div>
                 <div id="backGroundOptions" className="dialogBox">
                   <FormControlLabel
@@ -266,7 +316,7 @@ function App() {
                     }
                     label="Enable body segmentation"
                   />
-                    <InputLabel htmlFor="fillter-select">
+                    <InputLabel htmlFor="fillter-select" style={{ paddingTop: '5px'}}>
                        Choose fillter type
                     </InputLabel>
                     <Controller
@@ -284,6 +334,86 @@ function App() {
                       </Select>
                     }
                     />
+                    <InputLabel htmlFor="archs-select" style={{ paddingTop: '5px'}}>
+                       Choose neural network type
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="archs"
+                    defaultValue="MobileNet standard"
+                    as={
+                      <Select id="archs-select" disabled={!backgroundChecked}>
+                          {archs.map((fillterType) => {
+                            return(
+                            <MenuItem key={fillterType.text} value={fillterType.value}>
+                                {fillterType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
+                    <div>
+                    <FormControlLabel
+                    control={
+                      <Checkbox
+                      disabled={!backgroundChecked}
+                      checked={imgCheckBox}
+                      onChange={handleImgCheckbox}
+                      color="primary"
+                    />
+                    }
+                    label="Picture background"
+                    />
+                    <InputLabel htmlFor="picture-select" style={{ paddingTop: '5px'}}>
+                       Choose background picture
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="pictures"
+                    defaultValue="forest.jpg"
+                    as={
+                      <Select id="pictures-select" disabled={!imgCheckBox}>
+                          {pictures.map((fillterType) => {
+                            return(
+                            <MenuItem key={fillterType.text} value={fillterType.value}>
+                                {fillterType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
+                  </div>
+                  <div>
+                    <FormControlLabel
+                    control={
+                      <Checkbox
+                      disabled={!backgroundChecked}
+                      checked={vidCheckBox}
+                      onChange={handleVidCheckbox}
+                      color="primary"
+                    />
+                    }
+                    label="Video background"
+                    />
+                    <InputLabel htmlFor="video-select" style={{ paddingTop: '5px'}}>
+                       Choose background video
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="videos"
+                    defaultValue="flower.webm"
+                    as={
+                      <Select id="video-select" disabled={!vidCheckBox}>
+                          {videos.map((fillterType) => {
+                            return(
+                            <MenuItem key={fillterType.text} value={fillterType.value}>
+                                {fillterType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
+                  </div>
                 </div>
                 <div id="faceMaskOptions" className="dialogBox">
                   <FormControlLabel
@@ -356,7 +486,9 @@ function App() {
         </Dialog>
       </div>
       {startClmMasking && <FaceMask mask={maskSelected} />}
-      {startBodypixSeg && <BodypixOutput fillterType={fillterType}/>}
+      {startBodypixSeg && <BodypixOutput fillterType={fillterType} architectureComplexity={archType} picture={imgSelected}
+      imgSelected={imgCheckBox} vidSelected={vidCheckBox} video={vidSelected}
+      />}
       {startClmDeform && <FaceDeform deform={deformSelected} />}
     </div>
   );

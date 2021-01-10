@@ -6,23 +6,22 @@ import * as tf from '@tensorflow/tfjs';
 export default function BodypixOutput(props) {
   //////////////Could be props//////////////////
 
-  let architectureComplexity = [
-      "MobileNet basic",
-      "MobileNet standard",
-      "MobileNet full",
-      "ResNet basic",
-      "ResNet standard",
-      "ResNet full",
-    ][1]; //switch between settings for fast preview
-
-  let imgSrc = './src/components/Bodypix/Background/room.jpg';
-  let vidSrc = './src/components/Bodypix/Background/flower.webm';
 
     useEffect(() => {
+        let imgSrc = './src/components/Bodypix/Background/' + props.picture;
+        let vidSrc = './src/components/Bodypix/Background/' + props.video;
+
         let isCancelled = false;
         let width = window.innerWidth;
         let height = window.innerHeight;
-        let backgroundType = "img"; // vid, img
+        let backgroundType;
+        if (props.imgSelected) {
+            backgroundType = "img";
+        } else if (props.vidSelected) {
+            backgroundType = "vid";
+        } else {
+            backgroundType = "none";
+        }
         let filterSettings = {
             type: props.fillterType, // one of filterTypes or null for no filters
             value: 40,        // 1-100- strenght of filter
@@ -32,17 +31,6 @@ export default function BodypixOutput(props) {
         let hueOffset = 0;
         let imageBackground = new Image(width, height);
         imageBackground.src = imgSrc;
-
-        /*
-        let videoBackground = document.createElement('video');
-        videoBackground.src = vidSrc;
-        videoBackground.width = width;
-        videoBackground.height = height;
-        videoBackground.preload="auto";
-        videoBackground.loop = true;
-        videoBackground.playsInline = true;
-        videoBackground.autoplay = true;
-        */
 
         let detection;
         tf.disableDeprecationWarnings()
@@ -97,16 +85,22 @@ export default function BodypixOutput(props) {
             ctx.globalCompositeOperation = 'destination-atop';
             if(backgroundType === "img") {
                 ctx.drawImage(imageBackground, 0, 0, width, height);
-            } else {
-                /*
+            } else if(backgroundType === "vid") {
+                let videoBackground = document.createElement('video');
+                videoBackground.src = vidSrc;
+                videoBackground.width = width;
+                videoBackground.height = height;
+                videoBackground.preload="auto";
+                videoBackground.loop = true;
+                videoBackground.playsInline = true;
+                videoBackground.autoplay = true;
                 ctx.drawImage(videoBackground, 0, 0, width, height);
-                */
             }
         }
 
         function getNeuralNetworkComplexity() {
 
-            switch(architectureComplexity) {
+            switch(props.architectureComplexity) {
                 case "MobileNet basic": {
                     return ({
                         architecture: 'MobileNetV1',

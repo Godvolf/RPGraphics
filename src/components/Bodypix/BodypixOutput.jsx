@@ -167,7 +167,7 @@ export default function BodypixOutput(props) {
         return( () => {
             isCancelled = true;
             let ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, width, height);
+            ctx.clearRect(0, 0, consts.width, consts.height);
         }
         )
     }, [props.fillterType])

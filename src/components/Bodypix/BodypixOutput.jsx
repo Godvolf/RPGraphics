@@ -3,7 +3,7 @@ import * as bodyPix from '@tensorflow-models/body-pix';
 import * as tf from '@tensorflow/tfjs';
 
 
-export default function BodypixOutput(width, height) {
+export default function BodypixOutput(width, height, fillterType) {
   const [video, setVid] = useState('');
 
   //////////////Could be props//////////////////
@@ -39,7 +39,7 @@ export default function BodypixOutput(width, height) {
         let height = window.innerHeight;
         let qualityFlag = 0;    // 0- fast, 1- accurate
         let filterSettings = {
-            type: filterType, // one of filterTypes or null for no filters
+            type: fillterType, // one of filterTypes or null for no filters
             value: 40,        // 1-100- strenght of filter
         }
 
@@ -93,7 +93,7 @@ export default function BodypixOutput(width, height) {
                     case "Sepia": ctx.filter = `sepia(${filterSettings.value}%)`; break;
                     case "Blur": ctx.filter = `blur(${filterSettings.value}px)`; break;
                     case "Hue": ctx.filter = `hue-rotate(${filterSettings.value*360/100}deg)`; break;
-                    default: console.log("no such filter"); break;
+                    default: break;
                 }
             }
             ctx.drawImage(video, 0, 0, width, height);
@@ -113,6 +113,6 @@ export default function BodypixOutput(width, height) {
               data[i+2] = data[i+2] ^ 255;
             }
         }*/
-    }, [imgSrc, filterType, width, height])
+    }, [imgSrc, fillterType, width, height])
     return(<span></span>);
 }

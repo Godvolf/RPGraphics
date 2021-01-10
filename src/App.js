@@ -5,7 +5,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import Dialog from '@material-ui/core/Dialog';
 import { ReorderTwoTone } from '@material-ui/icons';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, InputLabel, MenuItem, Select } from '@material-ui/core';
 import BodypixOutput from './components/Bodypix/BodypixOutput';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -28,9 +28,20 @@ function App() {
   const [textColor, setTextColor] = useState('black');
   
   const [backgroundChecked, setBackgroundChecked] = useState(false);
+  const [fillterType, setFillterType] = useState('None');
 
   const [faceMaskChecked, setFaceMaskChecked] = useState(false);
   
+  const fillters = [
+    { value: "None", text: "None"},
+    { value: "Rainbow", text: "Rainbow" },
+    { value: "B&W", text: "B&W" },
+    { value: "Sepia", text: "Sepia" },
+    { value: "Invert", text: "Invert" },
+    { value: "Blur", text: "Blur" },
+    { value: "Hue", text: "Hue" },
+];
+
 
   /* Handlers */
   const handleTextCheckbox = (event) => {
@@ -141,6 +152,7 @@ function App() {
     console.log(data);
     setTextValue(data.text);
     setTextColor(data.textColor);
+    setFillterType(data.fillterType);
     handleCloseModal();
   }
   
@@ -211,6 +223,24 @@ function App() {
                     }
                     label="Enable body segmentation"
                   />
+                    <InputLabel htmlFor="trinity-select">
+                       Choose fillter type
+                    </InputLabel>
+                    <Controller
+                    control={control}
+                    name="fillters"
+                    defaultValue="None"
+                    as={
+                      <Select id="fillter-select" disabled={!backgroundChecked}>
+                          {fillters.map((fillterType) => {
+                            return(
+                            <MenuItem key={fillterType.text} value={fillterType.value}>
+                                {fillterType.text}
+                            </MenuItem>
+                          )})}
+                      </Select>
+                    }
+                    />
                 </div>
                 <div id="faceMaskOptions" className="dialogBox">
                   <FormControlLabel
@@ -234,8 +264,10 @@ function App() {
             </DialogActions>
         </Dialog>
       </div>
+      {/*
       <Clmtrackr/>
-      <BodypixOutput width={width} height={height}/>
+      */}
+      <BodypixOutput width={width} height={height} fillterType={fillterType}/>
     </div>
   );
 }

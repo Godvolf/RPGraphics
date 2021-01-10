@@ -52,7 +52,9 @@ function App() {
     { value: "Sepia", text: "Sepia" },
     { value: "Invert", text: "Invert" },
     { value: "Blur", text: "Blur" },
-    { value: "Hue", text: "Hue" },
+    { value: "Color shift 1", text: "Color shift 1" },
+    { value: "Color shift 2", text: "Color shift 2" },
+    { value: "Color shift 3", text: "Color shift 3" },
 ];
 
   const archs = [

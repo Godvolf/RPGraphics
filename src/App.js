@@ -36,7 +36,7 @@ function App() {
 
   const [faceDeformChecked, setFaceDeformChecked] = useState(false);
   const [startClmDeform, setStartClmDeform] = useState(false);
-  const [deformSelected, setdeformSelected] = useState(10);
+  const [deformSelected, setdeformSelected] = useState('none');
   
   const fillters = [
     { value: "None", text: "None"},
@@ -57,17 +57,17 @@ function App() {
   ]
 
   const deforms = [
-    { value: 0, text: "unwell"},
-    { value: 1, text: "inca" } ,
-    { value: 2, text: "cheery" },
-    { value: 3, text: "dopey" },
-    { value: 4, text: "longface" },
-    { value: 5, text: "lucky" },
-    { value: 6, text: "overcute" },
-    { value: 7, text: "aloof" },
-    { value: 8, text: "evil" },
-    { value: 9, text: "artificial" },
-    { value: 10, text: "none" }
+    { value: "unwell", text: "unwell"},
+    { value: "inca", text: "inca" } ,
+    { value: "cheery", text: "cheery" },
+    { value: "dopey", text: "dopey" },
+    { value: "longface", text: "longface" },
+    { value: "lucky", text: "lucky" },
+    { value: "overcute", text: "overcute" },
+    { value: "aloof", text: "aloof" },
+    { value: "evil", text: "evil" },
+    { value: "artificial", text: "artificial" },
+    { value: "none", text: "none" }
   ]
 
 
@@ -330,7 +330,7 @@ function App() {
                     <Controller
                     control={control}
                     name="deforms"
-                    defaultValue={10}
+                    defaultValue={'none'}
                     as={
                       <Select id="deform-select" disabled={!faceDeformChecked}>
                           {deforms.map((maskType) => {

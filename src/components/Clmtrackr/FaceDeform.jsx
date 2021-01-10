@@ -60,7 +60,7 @@ export default function Clmtrackr2(props) {
         // get mask
         var maskname = Object.keys(presets)[props.deform];
         console.log(maskname);
-        fd.load(document.getElementById(maskname), presets[maskname], pModel);
+        // fd.load(document.getElementById(maskname), presets[maskname], pModel);
       }
 
     function drawMaskLoop() {
@@ -116,7 +116,7 @@ export default function Clmtrackr2(props) {
     
 
     for (var i = 0;i < pnums;i++) {
-        ph['component '+(i+3)] = presets['unwell'][i];
+        ph['component '+(i+3)] = presets[props.deform][i];
     }
 
     drawGridLoop();

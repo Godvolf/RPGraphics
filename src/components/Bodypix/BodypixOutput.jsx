@@ -78,11 +78,13 @@ export default function BodypixOutput(props) {
             if(filterSettings.type) {
                 switch(filterSettings.type) {
                     case "Rainbow": ctx.filter = `hue-rotate(${hueOffset}deg)`; break;
-                    case "B&W": ctx.filter = `grayscale(${filterSettings.value}%)`; break;
-                    case "Invert": ctx.filter = `invert(${filterSettings.value}%)`; break;
-                    case "Sepia": ctx.filter = `sepia(${filterSettings.value}%)`; break;
-                    case "Blur": ctx.filter = `blur(${filterSettings.value}px)`; break;
-                    case "Hue": ctx.filter = `hue-rotate(${filterSettings.value*360/100}deg)`; break;
+                    case "B&W": ctx.filter = `grayscale(100%)`; break;
+                    case "Invert": ctx.filter = `invert(100%)`; break;
+                    case "Sepia": ctx.filter = `sepia(100%)`; break;
+                    case "Blur": ctx.filter = `blur(10px)`; break;
+                    case "Color shift 1": ctx.filter = `hue-rotate(150deg)`; break;
+                    case "Color shift 2": ctx.filter = `hue-rotate(70deg)`; break;
+                    case "Color shift 3": ctx.filter = `hue-rotate(250deg)`; break;
                     default: break;
                 }
             }

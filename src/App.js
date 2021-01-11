@@ -34,6 +34,7 @@ function App() {
   const [archType, setArchType] = useState('MobileNet standard');
   const [imgCheckBox, setImgCheckbox] = useState(false);
   const [imgSelected, setImgSelected] = useState('');
+  const [imgUploaded, setImgUploaded] = useState(undefined);
   const [vidCheckBox, setVidCheckbox] = useState(false);
   const [vidSelected, setVideoSelected] = useState('flower.webm');
 
@@ -142,6 +143,17 @@ function App() {
     setModal(false);
   }
 
+    const handleUploadChange = (selectorFiles) =>
+    {
+      if (!selectorFiles || !selectorFiles[0]) return;
+  
+      const FR = new FileReader();
+      FR.addEventListener("load", (evt) => {
+        setImgUploaded(evt.target.result);
+      });
+      FR.readAsDataURL(selectorFiles[0]);
+    }
+
   /* Text */
   useEffect(() => {
     if (textValue !== '' ) {
@@ -183,7 +195,6 @@ function App() {
 
   useEffect(() => {
     const onMouseClick = (e) => {
-      console.log(e.target.id);
       if (e.target.id === 'text-canvas') {
         setMouseClicked(!mouseClicked);
       }
@@ -197,6 +208,9 @@ function App() {
     window.removeEventListener("click", onMouseClick);
   }}, [mouseClicked])
 
+  useEffect(() => {
+
+  }, [])
 
   useEffect(() => {
   /* Handle window resizes */
@@ -384,9 +398,9 @@ function App() {
                     }
                     />
                     <div>
-                    <label for="loadPicture">Load your picture:</label>
+                    <label htmlFor="loadPicture">Load your picture:</label>
                     <input type="file" ref={register} disabled={!imgCheckBox}
-                          id="loadPicture" name="loadPicture"
+                          id="loadPicture" name="loadPicture" onChange={ (e) => handleUploadChange(e.target.files) }
                           accept="image/png, image/jpeg"/>
                     </div>
                   </div>
@@ -494,7 +508,7 @@ function App() {
       </div>
       {startClmMasking && <FaceMask mask={maskSelected} />}
       {startBodypixSeg && <BodypixOutput fillterType={fillterType} architectureComplexity={archType} picture={imgSelected}
-      imgSelected={imgCheckBox} vidSelected={vidCheckBox} video={vidSelected}
+      imgSelected={imgCheckBox} vidSelected={vidCheckBox} video={vidSelected} imgUploaded={imgUploaded}
       />}
       {startClmDeform && <FaceDeform deform={deformSelected} />}
     </div>

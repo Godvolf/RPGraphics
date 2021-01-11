@@ -5,12 +5,15 @@ import consts from "../../consts";
 
 
 export default function BodypixOutput(props) {
-  //////////////Could be props//////////////////
-
 
     useEffect(() => {
         console.log(props.picture);
-        let imgSrc = './src/components/Bodypix/Background/' + props.picture;
+        let imgSrc;
+        if (props.imgUploaded) {
+            imgSrc = props.imgUploaded;
+        } else {
+            imgSrc = './src/components/Bodypix/Background/' + props.picture;
+        }
         let vidSrc = './src/components/Bodypix/Background/' + props.video;
 
         let isCancelled = false;
